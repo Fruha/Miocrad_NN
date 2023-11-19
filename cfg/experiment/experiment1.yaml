@@ -63,7 +63,7 @@ training:
     scheduler:
         name: torch.optim.lr_scheduler.ExponentialLR
         params:
-            momentum: 0.999999
+            gamma: 0.9999999
     trainer:
         devices: "auto"
         accelerator: "auto"
