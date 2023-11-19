@@ -1,0 +1,93 @@
+data:
+    patients_re: "./ptbdb_data/patient*"
+    train_dataset_size: 0.7
+    val_dataset_size: 0.3
+    labels:
+        - "Myocardial infarction"
+        - "Healthy control"
+    train_loader:
+        batch_size: 4
+        num_workers: 0
+        shuffle: true
+        pin_memory: true
+    val_loader:
+        batch_size: 4
+        num_workers: 0
+        shuffle: false
+        pin_memory: true
+    window_size: 10000
+    channels:
+        # - i
+        # - ii
+        # - iii 
+        # - avr
+        # - avl
+        # - avf
+        # - v1
+        # - v2
+        # - v3
+        # - v4
+        # - v5
+        - v6
+        # - vx
+        # - vy
+        - vz
+
+model:
+    encoder:
+        out_channels:
+            - 32
+            - 32
+            - 32
+            - 32
+            - 32
+            - 32
+            - 32
+            - 32
+    fc_1:
+        params:
+            out_features: 128
+        # bn: true
+        # dropout: 0.2
+
+
+training:
+    finetune:
+        flag: false
+        new_scheduler: false
+        path: "tb_logs/model_v1/version_16/checkpoints/model-epoch=0999.ckpt"
+    optimizer:
+        name: torch.optim.Adam
+        params:
+            lr: 0.0003
+    scheduler:
+        name: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
+        params:
+            T_0: 100
+            T_mult: 2
+            eta_min: 0.00001
+    trainer:
+        devices: "auto"
+        accelerator: "auto"
+        max_epochs: 1000
+        precision: 32
+logging:
+    save_cm_each_steps: 10
+    logger:
+        save_dir: "tb_logs"
+        name: "model_v1"
+    score_functions:
+        -   path: torchmetrics.classification.MulticlassF1Score
+        -   path: torchmetrics.classification.MulticlassAUROC
+        -   path: torchmetrics.classification.MulticlassPrecision
+        -   path: torchmetrics.classification.MulticlassRecall
+        -   path: torchmetrics.classification.MulticlassAccuracy
+            name: MulticlassAccuracyMacro
+            params:
+                average: macro        
+        -   path: torchmetrics.classification.MulticlassAccuracy
+            name: MulticlassAccuracyMicro
+            params:
+                average: micro
+
+global_seed: 69
