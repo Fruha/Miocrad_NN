@@ -6,16 +6,16 @@ data:
         - "Myocardial infarction"
         - "Healthy control"
     train_loader:
-        batch_size: 32
+        batch_size: 64
         num_workers: 0
         shuffle: true
         pin_memory: true
     val_loader:
-        batch_size: 32
+        batch_size: 64
         num_workers: 0
         shuffle: false
         pin_memory: true
-    window_size: 10000
+    window_size: 1000
     channels:
         # - i
         # - ii
@@ -46,7 +46,7 @@ model:
             - 32
             - 32
             - 64
-            - 128
+            # - 128
     fc_1:
         params:
             out_features: 128
@@ -62,7 +62,7 @@ training:
     optimizer:
         name: torch.optim.Adam
         params:
-            lr: 0.0001
+            lr: 0.0003
     scheduler:
         # name: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
         # params:
@@ -71,11 +71,11 @@ training:
         #     eta_min: 0.00001
         name: torch.optim.lr_scheduler.ExponentialLR
         params:
-            gamma: 0.9999999
+            gamma: 0.999
     trainer:
         devices: "auto"
         accelerator: "auto"
-        max_epochs: 1000
+        max_epochs: 500
         precision: 32
 logging:
     save_cm_each_steps: 10
